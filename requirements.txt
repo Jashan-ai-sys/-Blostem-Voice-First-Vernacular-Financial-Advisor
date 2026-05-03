@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pinecone
+google-generativeai
+pydantic
+streamlit
+python-dotenv
+langchain
+langchain-text-splitters
+unstructured
+pdf2image
+pdfminer.six
+pikepdf
+pypdf
