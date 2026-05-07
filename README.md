@@ -10,6 +10,26 @@
 
 ---
 
+## 📝 Founder's Note
+
+### The Problem
+
+Over 65% of India's adult population is eligible for basic banking products like Fixed Deposits, yet most never move past a savings account. The barrier isn't access — it's comprehension. A first-generation investor in Tier-2 India stares at terms like "cumulative payout," "TDS u/s 194A," and "premature penalty" in English-only interfaces and walks away. Bank branches are shrinking, call centres speak corporate, and existing fintech chatbots regurgitate canned FAQs without understanding what screen the user is stuck on. The cost of this gap is real: ₹4.3 lakh crore in household savings sits in zero-interest current accounts because the last mile of guidance simply doesn't exist in a language or medium people trust.
+
+### The Solution
+
+Blostem is a voice-first, vernacular financial advisor that sits inside the FD onboarding journey itself. A user speaks in Hindi, Hinglish, Punjabi, or Odia; the system answers in real-time speech grounded in 35+ official RBI/bank documents — not hallucinated generalities, but cited clauses with actual numbers. It knows which screen the user is on ("PAN verification"), what they just asked ("nominee add karna zaroori hai?"), and what tool to call (maturity calculator, TDS estimator, FD recommender) — all orchestrated through a single Gemini-powered voice pipeline that masks PII before it ever reaches the LLM.
+
+### The Approach
+
+We rejected a pure-LLM approach early: financial advice without retrieval is a liability. We also rejected a traditional IVR tree: users don't know which menu option maps to their real question. Instead, we bet on **RAG + tool-calling inside a real-time voice loop**. Gemini 3.1 Flash Live handles speech-to-speech with sub-second latency; a hierarchical parent-child chunking strategy over Pinecone ensures the retrieved context is never a sentence fragment; and LangChain-style deterministic tools (compound interest, old-vs-new tax regime, TDS thresholds) guarantee the math is never approximate. The voice agent, the RAG engine, and the calculator tools are three separate failure domains — if one degrades, the others still return useful, honest answers.
+
+### What's Next
+
+With another month, the first priority is **multi-turn memory with persistent user profiles** — remembering that Ramesh is 62, a senior citizen, has ₹5L to invest, and prefers quarterly payouts — so every subsequent session picks up where the last one ended. Second is **WhatsApp delivery via the Sarvam voice API**, because India's next 200 million internet users won't install another app, but they will reply to a WhatsApp voice note. Third is **real-time compliance drift detection**: when RBI changes a TDS threshold or DICGC raises its insurance cap, the pipeline should re-chunk, re-embed, and flag stale answers automatically — not wait for a human to notice.
+
+---
+
 ## ✨ Key Features
 
 | Feature | Description |
