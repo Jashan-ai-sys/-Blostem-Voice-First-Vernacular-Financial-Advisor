@@ -12,8 +12,7 @@ from app.config import settings
 
 # ── API Key Rotation ──────────────────────────────────────────────
 API_KEYS = [
-    "",
-    "",
+    "AIzaSyBYVpR7NBjWK2H9qAfhhgFsG3JTooCBf_c"
 ]
 current_key_idx = 0
 

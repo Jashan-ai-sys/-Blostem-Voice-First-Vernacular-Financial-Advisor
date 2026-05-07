@@ -69,11 +69,11 @@ class RAGEngine:
                     except Exception as e:
                         print(f"Error fetching parent context: {e}")
 
-                title = meta.get("section", meta.get("question_id", "Extracted Chunk"))
+                title = meta.get("section", meta.get("screen_title", meta.get("question_id", "Extracted Chunk")))
                 sources.append(SourceChunk(
                     title=title,
                     text=text,
-                    source_url=meta.get("source", ""),
+                    source_url=meta.get("image_path", meta.get("source", "")),
                     relevance_score=score
                 ))
             return sources

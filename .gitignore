@@ -23,3 +23,20 @@ __pycache__/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Node.js / Frontend
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Data and Media
+data/journey_screens/*.mp4
+data/raw/*.pdf
+*.sqlite3
+*.db

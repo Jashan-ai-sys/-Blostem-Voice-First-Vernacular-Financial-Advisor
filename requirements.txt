@@ -12,3 +12,6 @@ pdf2image
 pdfminer.six
 pikepdf
 pypdf
+langgraph-checkpoint-sqlite
+audio-recorder-streamlit
+requests

@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     PINECONE_INDEX_NAME: str = "financial-knowledge"
     EMBEDDING_MODEL: str = "models/gemini-embedding-2" # Current gemini-embedding model
     GENERATION_MODEL: str = "gemini-2.5-flash"
+    SARVAM_API_KEY: str = ""
 
     class Config:
         env_file = ".env"
