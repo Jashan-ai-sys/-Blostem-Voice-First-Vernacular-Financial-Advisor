@@ -18,7 +18,7 @@ Over 65% of India's adult population is eligible for basic banking products like
 
 ### The Solution
 
-Blostem is a voice-first, vernacular financial advisor that sits inside the FD onboarding journey itself. A user speaks in Hindi, Hinglish, Punjabi, or Odia; the system answers in real-time speech grounded in 35+ official RBI/bank documents — not hallucinated generalities, but cited clauses with actual numbers. It knows which screen the user is on ("PAN verification"), what they just asked ("nominee add karna zaroori hai?"), and what tool to call (maturity calculator, TDS estimator, FD recommender) — all orchestrated through a single Gemini-powered voice pipeline that masks PII before it ever reaches the LLM.
+Blostem is a voice-first, vernacular financial advisor that sits inside the FD onboarding journey itself. A user speaks in Hindi, Hinglish, Punjabi, or Odia; the system answers in real-time speech grounded in 35+ official RBI/bank documents — not hallucinated generalities, but cited clauses with actual numbers. It knows which screen the user is on ("PAN verification"), what they just asked ("nominee add karna zaroori hai?"), and what tool to call (maturity calculator, TDS estimator, FD recommender) — all orchestrated through a single Gemini-powered voice pipeline that masks PII before it ever reaches the LLM. Critically, the system **maintains a live user profile throughout the conversation** — when a user says "meri age 63 hai" or "main 5 lakh invest karna chahta hoon," the voice agent automatically updates their state (age, amount, senior citizen status, risk profile) so every subsequent calculation and recommendation is personalized, without ever asking the user to fill a form.
 
 ### The Approach
 
@@ -42,6 +42,7 @@ With another month, the first priority is **multi-turn memory with persistent us
 | 🌐 **Vernacular Support** | Adapts to Hindi, English, Hinglish, Odia, and Punjabi |
 | 💡 **Term Explainer** | Click any financial term in chat to get a RAG-grounded plain-language explanation |
 | 📊 **FD Recommendation Engine** | Rule-based scoring engine that suggests FDs based on user profile |
+| 🧠 **Stateful User Profile via Voice** | System extracts and maintains age, amount, tenure, risk, and senior status from natural conversation — no forms needed |
 
 ---
 
