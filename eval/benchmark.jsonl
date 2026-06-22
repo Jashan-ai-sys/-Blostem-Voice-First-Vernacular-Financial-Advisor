@@ -1,0 +1,40 @@
+{"question": "What is the minimum tenure for a fixed deposit?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["7 days"]}
+{"question": "Can I withdraw my FD before maturity?", "expected_source": "premature_withdrawal", "expected_keywords": ["withdraw", "lock-in"]}
+{"question": "How much of my deposit is insured by DICGC?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["DICGC"]}
+{"question": "Which form replaces Form 10E for claiming relief on salary arrears?", "expected_source": "incometax_faqs", "expected_keywords": ["Form No. 39", "Form 39"]}
+{"question": "What are Form 15G and 15H used for?", "expected_source": "121", "expected_keywords": ["15G", "15H"]}
+{"question": "When does the new Income Tax Act 2025 come into effect?", "expected_source": "incometax_faqs", "expected_keywords": ["April 1, 2026"]}
+{"question": "What are the video KYC requirements?", "expected_source": "KYC", "expected_keywords": ["KYC"]}
+{"question": "What does the DPDPA say about consent for handling personal data?", "expected_source": "DPDPA_data_handling", "expected_keywords": ["consent"]}
+{"question": "What is Form 145 used for in foreign remittances?", "expected_source": "incometax_faqs", "expected_keywords": ["remittance", "145"]}
+{"question": "What are the SEBI rules for mutual funds, AIF and SIF?", "expected_source": "SEBI_MF_AIF_SIF_summary", "expected_keywords": ["SEBI"]}
+{"question": "What is the tax audit turnover threshold for a business?", "expected_source": "incometax_faqs", "expected_keywords": ["1 crore", "audit"]}
+{"question": "What interest rate do banks offer on deposits?", "expected_source": "Master-Direction", "expected_keywords": ["interest rate", "deposit"]}
+{"question": "What does FD tenure mean?", "expected_source": "tenure", "expected_keywords": ["locked", "length"]}
+{"question": "Why do you need my PAN to open an FD?", "expected_source": "pan", "expected_keywords": ["PAN", "TDS"]}
+{"question": "Do senior citizens get a higher FD interest rate?", "expected_source": "senior_citizen_bonus", "expected_keywords": ["senior", "extra"]}
+{"question": "Is there a special FD interest rate for women?", "expected_source": "women_bonus", "expected_keywords": ["women", "0.2"]}
+{"question": "What is annual yield on a fixed deposit?", "expected_source": "annual_yield", "expected_keywords": ["yield", "compounding"]}
+{"question": "What happens during a video KYC call?", "expected_source": "vkyc", "expected_keywords": ["video", "verification"]}
+{"question": "Why should I add a nominee to my FD?", "expected_source": "nominee", "expected_keywords": ["nominee", "receives"]}
+{"question": "What does the reinvest option do at maturity?", "expected_source": "reinvest", "expected_keywords": ["reinvest", "fresh"]}
+{"question": "What is the maturity amount of an FD?", "expected_source": "maturity_amount", "expected_keywords": ["maturity", "principal"]}
+{"question": "When will I receive my FD interest?", "expected_source": "interest_payout", "expected_keywords": ["payout", "maturity"]}
+{"question": "What is a tax saver fixed deposit?", "expected_source": "tax_saver_fd", "expected_keywords": ["80C", "5-year"]}
+{"question": "Can I withdraw my FD money instantly?", "expected_source": "instant_withdrawal", "expected_keywords": ["instant", "withdraw"]}
+{"question": "How do I earn the goldback reward?", "expected_source": "goldback_reward", "expected_keywords": ["gold", "50,000"]}
+{"question": "Which bank actually holds my fixed deposit?", "expected_source": "partner_bank", "expected_keywords": ["bank", "holds"]}
+{"question": "What is the interest rate per annum on the FD?", "expected_source": "interest_rate", "expected_keywords": ["interest rate", "yearly"]}
+{"question": "What are the total gains on my FD?", "expected_source": "total_gains", "expected_keywords": ["gains", "interest"]}
+{"question": "What happens to my money when the FD matures?", "expected_source": "action_on_maturity", "expected_keywords": ["maturity", "reinvest"]}
+{"question": "What does a single or joint FD holder mean?", "expected_source": "holder_type", "expected_keywords": ["holder", "joint"]}
+{"question": "Why do you ask for my annual income range?", "expected_source": "annual_income_range", "expected_keywords": ["income", "KYC"]}
+{"question": "What is the penalty for breaking an FD early?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["penalty", "0.5"]}
+{"question": "Are large deposits non-callable?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["non-callable"]}
+{"question": "What are the income tax slabs for FY 2025-26?", "expected_source": "tax_slabs_fy25_26", "expected_keywords": ["slab"]}
+{"question": "What is an AIF under SEBI regulations?", "expected_source": "SEBI_MF_AIF_SIF_summary", "expected_keywords": ["AIF"]}
+{"question": "What does SIF mean under SEBI?", "expected_source": "SEBI_MF_AIF_SIF_summary", "expected_keywords": ["SIF"]}
+{"question": "What is Form 128 used for?", "expected_source": "128", "expected_keywords": ["128"]}
+{"question": "What does DPDPA require for handling personal data?", "expected_source": "DPDPA_data_handling", "expected_keywords": ["data"]}
+{"question": "How is interest on bank deposits regulated?", "expected_source": "Master-Direction", "expected_keywords": ["deposit"]}
+{"question": "Who is eligible to submit Form 15G or 15H?", "expected_source": "121", "expected_keywords": ["15G", "15H"]}

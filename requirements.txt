@@ -1,11 +1,16 @@
 fastapi
 uvicorn
 pinecone
+rank-bm25
+docling
 google-generativeai
 pydantic
-streamlit
+pydantic-settings
+redis
 python-dotenv
 langchain
+langchain-core
+langchain-google-genai
 langchain-text-splitters
 unstructured
 pdf2image
@@ -13,5 +18,4 @@ pdfminer.six
 pikepdf
 pypdf
 langgraph-checkpoint-sqlite
-audio-recorder-streamlit
 requests

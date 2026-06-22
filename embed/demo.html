@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blostem Widget — embed demo</title>
+  <style>
+    body { font: 16px system-ui, sans-serif; margin: 0; padding: 48px; color: #191B1E; background: #fff; }
+    .card { max-width: 640px; margin: 0 auto; border: 1px solid #EBEBEC; border-radius: 14px; padding: 28px; }
+    h1 { margin: 0 0 6px; } p { color: #707275; }
+    button { font: 14px system-ui; padding: 8px 12px; border: 1px solid #EBEBEC; border-radius: 8px; background: #F4F5F6; cursor: pointer; margin: 4px 4px 0 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Host system (demo)</h1>
+    <p>This simulates your existing app. The Blostem assistant is injected by a single
+       script tag — look bottom-right for the floating <b>“Need help?”</b> button.</p>
+    <p>Simulate your app telling the widget which screen the user is on:</p>
+    <button onclick="BlostemWidget.setScreen('tenure_selection')">Screen: Tenure</button>
+    <button onclick="BlostemWidget.setScreen('bank_fd_review')">Screen: Bank Review</button>
+    <button onclick="BlostemWidget.setScreen('payment_screen')">Screen: Payment</button>
+    <button onclick="BlostemWidget.reportError({code:'PAYMENT_DECLINED',http_status:402})">Simulate error</button>
+  </div>
+
+  <!-- The ONE line your system adds. Point these at your running services. -->
+  <script
+    src="./blostem-widget.js"
+    data-backend="http://localhost:8000"
+    data-voice="http://localhost:7860"
+    data-language="Hinglish"
+    defer></script>
+</body>
+</html>

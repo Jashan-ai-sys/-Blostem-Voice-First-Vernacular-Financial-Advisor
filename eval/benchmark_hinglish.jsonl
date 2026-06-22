@@ -1,0 +1,12 @@
+{"question": "FD ke liye minimum kitne din ka tenure hota hai?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["7 days"]}
+{"question": "Kya main maturity se pehle apni FD tod sakta hoon?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["premature"]}
+{"question": "DICGC mere deposit ka kitna paisa insure karta hai?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["DICGC"]}
+{"question": "Form 15G aur 15H kis cheez ke liye use hote hain?", "expected_source": "121", "expected_keywords": ["15G", "15H"]}
+{"question": "Naya Income Tax Act 2025 kab se lagu hoga?", "expected_source": "incometax_faqs", "expected_keywords": ["April 1, 2026"]}
+{"question": "Video KYC ke liye kya kya requirements hoti hain?", "expected_source": "KYC", "expected_keywords": ["KYC"]}
+{"question": "DPDPA personal data ke consent ke baare mein kya kehta hai?", "expected_source": "DPDPA_data_handling", "expected_keywords": ["consent"]}
+{"question": "Mutual fund, AIF aur SIF ke liye SEBI ke niyam kya hain?", "expected_source": "SEBI_MF_AIF_SIF_summary", "expected_keywords": ["SEBI"]}
+{"question": "Business ke liye tax audit ka turnover limit kitna hai?", "expected_source": "incometax_faqs", "expected_keywords": ["1 crore", "audit"]}
+{"question": "Bank deposits par kitna interest rate dete hain?", "expected_source": "Master-Direction", "expected_keywords": ["interest rate", "deposit"]}
+{"question": "फिक्स्ड डिपॉजिट के लिए न्यूनतम अवधि क्या है?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["7 days"]}
+{"question": "क्या मैं मैच्योरिटी से पहले एफडी तोड़ सकता हूँ?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["premature"]}

@@ -1,0 +1,32 @@
+{"question": "What is the minimum tenure for a fixed deposit?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["7 days"]}
+{"question": "Can I withdraw my FD before maturity?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["premature"]}
+{"question": "How much of my deposit is insured by DICGC?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["DICGC"]}
+{"question": "Which form replaces Form 10E for claiming relief on salary arrears?", "expected_source": "incometax_faqs", "expected_keywords": ["Form No. 39", "Form 39"]}
+{"question": "What are Form 15G and 15H used for?", "expected_source": "121", "expected_keywords": ["15G", "15H"]}
+{"question": "When does the new Income Tax Act 2025 come into effect?", "expected_source": "incometax_faqs", "expected_keywords": ["April 1, 2026"]}
+{"question": "What are the video KYC requirements?", "expected_source": "KYC", "expected_keywords": ["KYC"]}
+{"question": "What does the DPDPA say about consent for handling personal data?", "expected_source": "DPDPA_data_handling", "expected_keywords": ["consent"]}
+{"question": "What is Form 145 used for in foreign remittances?", "expected_source": "incometax_faqs", "expected_keywords": ["remittance", "145"]}
+{"question": "What are the SEBI rules for mutual funds, AIF and SIF?", "expected_source": "SEBI_MF_AIF_SIF_summary", "expected_keywords": ["SEBI"]}
+{"question": "What is the tax audit turnover threshold for a business?", "expected_source": "incometax_faqs", "expected_keywords": ["1 crore", "audit"]}
+{"question": "What interest rate do banks offer on deposits?", "expected_source": "Master-Direction", "expected_keywords": ["interest rate", "deposit"]}
+{"question": "FD ke liye minimum kitne din ka tenure hota hai?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["7 days"]}
+{"question": "Kya main maturity se pehle apni FD tod sakta hoon?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["premature"]}
+{"question": "DICGC mere deposit ka kitna paisa insure karta hai?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["DICGC"]}
+{"question": "Form 15G aur 15H kis cheez ke liye use hote hain?", "expected_source": "121", "expected_keywords": ["15G", "15H"]}
+{"question": "Naya Income Tax Act 2025 kab se lagu hoga?", "expected_source": "incometax_faqs", "expected_keywords": ["April 1, 2026"]}
+{"question": "Video KYC ke liye kya kya requirements hoti hain?", "expected_source": "KYC", "expected_keywords": ["KYC"]}
+{"question": "DPDPA personal data ke consent ke baare mein kya kehta hai?", "expected_source": "DPDPA_data_handling", "expected_keywords": ["consent"]}
+{"question": "Mutual fund, AIF aur SIF ke liye SEBI ke niyam kya hain?", "expected_source": "SEBI_MF_AIF_SIF_summary", "expected_keywords": ["SEBI"]}
+{"question": "Business ke liye tax audit ka turnover limit kitna hai?", "expected_source": "incometax_faqs", "expected_keywords": ["1 crore", "audit"]}
+{"question": "Bank deposits par kitna interest rate dete hain?", "expected_source": "Master-Direction", "expected_keywords": ["interest rate", "deposit"]}
+{"question": "फिक्स्ड डिपॉजिट के लिए न्यूनतम अवधि क्या है?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["7 days"]}
+{"question": "क्या मैं मैच्योरिटी से पहले एफडी तोड़ सकता हूँ?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["premature"]}
+{"question": "Salary arrears par relief claim karne ke liye Form 10E ko kaun sa form replace karta hai?", "expected_source": "incometax_faqs", "expected_keywords": ["Form No. 39", "Form 39"]}
+{"question": "Foreign remittance ke liye Form 145 kis kaam aata hai?", "expected_source": "incometax_faqs", "expected_keywords": ["remittance", "145"]}
+{"question": "DICGC जमा बीमा कितने रुपये तक कवर करता है?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["DICGC"]}
+{"question": "नया इनकम टैक्स एक्ट कब से लागू होगा?", "expected_source": "incometax_faqs", "expected_keywords": ["April 1, 2026"]}
+{"question": "वीडियो केवाईसी के लिए क्या आवश्यकताएँ हैं?", "expected_source": "KYC", "expected_keywords": ["KYC"]}
+{"question": "What is the penalty for breaking an FD early?", "expected_source": "RBI_FD_DICGC_summary", "expected_keywords": ["premature"]}
+{"question": "Bank deposit par interest kaise calculate hota hai?", "expected_source": "Master-Direction", "expected_keywords": ["interest"]}
+{"question": "म्यूचुअल फंड और AIF के लिए सेबी के नियम क्या हैं?", "expected_source": "SEBI_MF_AIF_SIF_summary", "expected_keywords": ["SEBI"]}

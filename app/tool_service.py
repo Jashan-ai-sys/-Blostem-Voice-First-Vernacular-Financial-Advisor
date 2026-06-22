@@ -35,22 +35,25 @@ class TDSInput(BaseModel):
 @tool("calculate_tds_on_fd_interest", args_schema=TDSInput)
 def calculate_tds_on_fd_interest(age: int, fd_interest: float, pan_available: bool) -> dict:
     """Determines if TDS applies to the FD interest and calculates the deductible amount based on age and PAN status."""
-    threshold = 50000 if age >= 60 else 40000
-    
+    # Section 194A thresholds, FY 2025-26 (raised in Budget 2025):
+    # senior citizens (60+) ₹1,00,000; others ₹50,000.
+    threshold = 100000 if age >= 60 else 50000
+
     if fd_interest <= threshold:
         return {
             "threshold_hit": False,
             "deductible_tds": 0.0,
-            "explanation": f"Interest is below the ₹{threshold} threshold. No TDS."
+            "explanation": f"Interest is at or below the ₹{threshold:,} FY25-26 threshold. No TDS."
         }
-        
+
     rate = 0.10 if pan_available else 0.20
     deductible_tds = fd_interest * rate
-    
+
     return {
         "threshold_hit": True,
         "deductible_tds": round(deductible_tds, 2),
-        "explanation": f"Interest exceeds the ₹{threshold} threshold. TDS applied at {rate*100}%."
+        "explanation": f"Interest exceeds the ₹{threshold:,} threshold; TDS at {int(rate*100)}% "
+                       f"({'PAN linked' if pan_available else 'no PAN'})."
     }
 
 # ─── 3. Income Tax Calculator (Simplified for MVP) ──────────────────────────
@@ -59,65 +62,75 @@ class IncomeTaxInput(BaseModel):
     age: int = Field(gt=0, description="Age of the taxpayer.")
     regime: Literal["old", "new", "both"] = Field(default="both", description="Tax regime preference. Pass 'both' to compare.")
 
+# ─── FY 2025-26 (AY 2026-27) income-tax slabs ──────────────────────────────
+# Each table is a list of (upper_bound, marginal_rate); the last band is open-ended.
+_INF = float("inf")
+_NEW_REGIME = [(400000, 0.0), (800000, 0.05), (1200000, 0.10),
+               (1600000, 0.15), (2000000, 0.20), (2400000, 0.25), (_INF, 0.30)]
+_OLD_BELOW_60 = [(250000, 0.0), (500000, 0.05), (1000000, 0.20), (_INF, 0.30)]
+_OLD_SENIOR = [(300000, 0.0), (500000, 0.05), (1000000, 0.20), (_INF, 0.30)]
+_OLD_SUPER_SENIOR = [(500000, 0.0), (1000000, 0.20), (_INF, 0.30)]
+_CESS = 0.04  # Health & Education Cess on tax
+
+
+def _slab_tax(income: float, slabs: list) -> float:
+    tax, lower = 0.0, 0.0
+    for upper, rate in slabs:
+        if income > lower:
+            tax += (min(income, upper) - lower) * rate
+            lower = upper
+        else:
+            break
+    return tax
+
+
+def _new_regime_tax(taxable_income: float) -> float:
+    tax = _slab_tax(taxable_income, _NEW_REGIME)
+    if taxable_income <= 1200000:  # Section 87A rebate makes it effectively nil
+        tax = 0.0
+    return round(tax * (1 + _CESS), 2)
+
+
+def _old_regime_tax(taxable_income: float, age: int) -> float:
+    slabs = _OLD_SUPER_SENIOR if age >= 80 else _OLD_SENIOR if age >= 60 else _OLD_BELOW_60
+    tax = _slab_tax(taxable_income, slabs)
+    if taxable_income <= 500000:  # Section 87A rebate (up to ₹12,500)
+        tax = max(0.0, tax - 12500)
+    return round(tax * (1 + _CESS), 2)
+
+
 @tool("calculate_income_tax", args_schema=IncomeTaxInput)
 def calculate_income_tax(total_income: float, age: int, regime: str = "both") -> dict:
-    """Calculates basic income tax liability (MVP logic) and compares old vs new regimes if requested."""
-    
-    def calc_tax(reg: str):
-        tax = 0.0
-        if reg == "new":
-            if total_income > 700000:
-                tax = (total_income - 700000) * 0.10
-        else:
-            exemption = 300000 if age >= 60 else 250000
-            if total_income > exemption:
-                tax = (total_income - exemption) * 0.20
-        return round(tax, 2)
-        
+    """Calculates income tax for FY 2025-26 (AY 2026-27) using real slabs, the
+    Section 87A rebate, and 4% cess. `total_income` is taken as taxable income."""
+    note = ("FY 2025-26 (AY 2026-27) slabs, incl. Section 87A rebate and 4% cess. "
+            "Assumes total_income is taxable income (after deductions). "
+            "Surcharge for very high incomes not included.")
+
     if regime == "both":
+        new_tax = _new_regime_tax(total_income)
+        old_tax = _old_regime_tax(total_income, age)
         return {
-            "old_regime_tax_liability": calc_tax("old"),
-            "new_regime_tax_liability": calc_tax("new"),
-            "recommendation": "new" if calc_tax("new") < calc_tax("old") else "old",
-            "note": "This is a simplified MVP tax comparison."
-        }
-    else:
-        return {
-            "regime_used": regime,
-            "total_tax_liability": calc_tax(regime),
-            "note": "This is a simplified MVP tax calculation."
+            "old_regime_tax_liability": old_tax,
+            "new_regime_tax_liability": new_tax,
+            "recommendation": "new" if new_tax <= old_tax else "old",
+            "note": note,
         }
 
-# Combine into a list that the Agent will bind
-from app.recommendation_engine import recommend_fd_options
+    tax = _new_regime_tax(total_income) if regime == "new" else _old_regime_tax(total_income, age)
+    return {"regime_used": regime, "total_tax_liability": tax, "note": note}
+
+# ─── Shared RAG engine ──────────────────────────────────────────────────────
+# Calculators are invoked by main.py's tool endpoints; the voice agent and
+# frontend reach RAG/profile via those HTTP endpoints, so the LangChain @tool
+# wrappers for search/profile are not bound here.
 from app.rag import RAGEngine
 
-# Initialize RAG Engine globally for the tool
 rag_engine = RAGEngine()
 rag_engine.initialize()
 
-class RAGInput(BaseModel):
-    query: str = Field(description="The question or search query to look up in the financial knowledge base.")
 
-@tool("search_financial_rules", args_schema=RAGInput)
-def search_financial_rules(query: str) -> list[dict]:
-    """Searches the official knowledge base for rules, FAQs, and policies regarding FDs, TDS, savings accounts, etc."""
-    sources = rag_engine.retrieve_chunks(query)
-    # Return as list of dicts for LLM to parse
-    import json
-    return json.dumps([{"title": s.title, "content": s.text, "image_path": s.source_url} for s in sources])
-
-class UpdateProfileInput(BaseModel):
-    new_cash_amount: float = Field(default=None, description="The new amount the user wants to invest.")
-    new_age: int = Field(default=None, description="The user's updated age.")
-
-@tool("update_user_profile", args_schema=UpdateProfileInput)
-def update_user_profile(new_cash_amount: float = None, new_age: int = None) -> dict:
-    """Call this tool if the user explicitly changes their age, age-group, or investment amount."""
-    return {"status": "success", "message": "State updated successfully in the backend!"}
-
-
-# ─── 6. Term Explainer (RAG-grounded) ──────────────────────────────────────
+# ─── Term Explainer (RAG-grounded) ──────────────────────────────────────────
 
 class ExplainTermInput(BaseModel):
     term: str = Field(description="The specific financial term or concept the user wants explained (e.g., 'compound interest', 'FD', 'TDS').")
@@ -125,44 +138,26 @@ class ExplainTermInput(BaseModel):
 
 @tool("explain_term", args_schema=ExplainTermInput)
 def explain_term(term: str, language: str = "en") -> dict:
-    """Explains a complex financial term in simple language, grounded with official RAG knowledge base context."""
-    from langchain_google_genai import ChatGoogleGenerativeAI
-    from app.config import settings
+    """Returns official knowledge-base context for a financial term. Grounded in
+    RAG (no extra LLM call) — the conversational model phrases it for the user.
 
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash", 
-        temperature=0.1,
-        api_key=settings.GOOGLE_API_KEY
-    )
-
-    lang_map = {"en": "English", "hi": "Hindi", "pa": "Punjabi"}
-    target_lang = lang_map.get(language, "English")
-
-    # Retrieve RAG context for grounding
-    sources = rag_engine.retrieve_chunks(f"What is {term}?")
-    context = "\n".join([s.text for s in sources[:2]]) if sources else "No specific bank context found."
-
-    prompt = f"""Explain the financial term '{term}' in 1 short, simple sentence for a beginner. 
-The explanation MUST be completely in the {target_lang} language.
-
-Bank Knowledge Base Context (use if relevant):
-{context}
-"""
-
+    Fully wrapped: never raises (so the endpoint can't 500). If nothing is found
+    it says so explicitly, so the model won't invent a definition."""
     try:
-        response = llm.invoke(prompt)
-        return {"explanation": response.content.strip()}
-    except Exception:
-        return {"explanation": "Explanation temporarily unavailable."}
-
-
-CALCULATOR_TOOLS = [
-    calculate_fd_maturity,
-    calculate_tds_on_fd_interest,
-    calculate_income_tax,
-    recommend_fd_options,
-    search_financial_rules,
-    update_user_profile,
-    explain_term
-]
+        sources = rag_engine.retrieve_chunks(f"What is {term}?")
+        if sources and sources[0].text.strip():
+            context = " ".join(s.text for s in sources[:2])[:800]
+            return {"term": term, "explanation": context, "found": True}
+        return {
+            "term": term, "found": False,
+            "explanation": f"No official definition found for '{term}'. Tell the user you "
+                           f"couldn't find it and suggest verifying with the bank — do not invent one.",
+        }
+    except Exception as e:
+        print(f"explain_term error: {e}")
+        return {
+            "term": term, "found": False,
+            "explanation": f"Couldn't fetch an explanation for '{term}' right now. "
+                           f"Tell the user to try again shortly — do not invent one.",
+        }
 

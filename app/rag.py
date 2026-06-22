@@ -2,89 +2,123 @@ import google.generativeai as genai
 from pinecone import Pinecone
 from app.config import settings
 from app.models import ChatResponse, SourceChunk
+from app.retrieval import HybridRetriever
 
 class RAGEngine:
     def __init__(self):
         self.pinecone_index = None
-        
+        self._retriever = None
+
     def initialize(self):
         """Initialize Google AI and Pinecone client."""
         if settings.GOOGLE_API_KEY:
             genai.configure(api_key=settings.GOOGLE_API_KEY)
-            
+
         if settings.PINECONE_API_KEY:
-            pc = Pinecone(api_key=settings.PINECONE_API_KEY)
-            self.pinecone_index = pc.Index(settings.PINECONE_INDEX_NAME)
+            try:
+                pc = Pinecone(api_key=settings.PINECONE_API_KEY)
+                self.pinecone_index = pc.Index(settings.PINECONE_INDEX_NAME)
+            except Exception as e:
+                # Index not created yet / unreachable → fall back to BM25-only retrieval.
+                print(f"Pinecone index unavailable ({e}); using BM25-only retrieval.")
+                self.pinecone_index = None
+
+        # Hybrid retriever: dense search is this engine's Pinecone query;
+        # sparse (BM25) + fusion + rerank live in the retrieval module.
+        self._retriever = HybridRetriever(dense_search=self._dense_search)
 
     def get_embedding(self, text: str, is_query: bool = False) -> list[float]:
-        """Get embeddings using Gemini Embedding 2 with task types."""
-        # For Gemini Embedding 2, we use task_type
+        """Embed a query/document. Backend is settings.EMBEDDING_BACKEND:
+        "local" (default) = multilingual-e5-base in-process; "gemini" = legacy API.
+
+        Queries are PII-masked (PAN/Aadhaar/phone) regardless of backend. On
+        failure this RAISES rather than returning a fake zero vector — the caller
+        (_dense_search) catches it and drops to BM25-only, so an embedding outage
+        degrades retrieval instead of silently poisoning it (voice stays live)."""
+        if is_query:
+            from app.pii_masker import mask_pii
+            safe = mask_pii(text)
+        else:
+            safe = text
+
+        if settings.EMBEDDING_BACKEND == "local":
+            try:
+                from app.embedder import embed_one
+                return embed_one(safe, is_query=is_query)
+            except Exception as e:
+                print(f"[rag] local embedding failed ({e}); falling back to BM25-only.")
+                raise
+
+        # Legacy Gemini path (BACKEND=gemini).
         task_type = "RETRIEVAL_QUERY" if is_query else "RETRIEVAL_DOCUMENT"
-        
-        # Adding task prefix explicitly as recommended in the prompt
-        formatted_text = f"task: question answering | query: {text}" if is_query else text
-        
+        formatted_text = f"task: question answering | query: {safe}" if is_query else safe
         try:
             result = genai.embed_content(
                 model=settings.EMBEDDING_MODEL,
                 content=formatted_text,
                 task_type=task_type,
-                output_dimensionality=768
+                output_dimensionality=settings.EMBEDDING_DIM,
             )
             return result['embedding']
         except Exception as e:
-            print(f"Embedding error: {e}")
-            # Mock embedding for fallback during setup
-            return [0.0] * 768
+            print(f"[rag] embedding failed ({e}); falling back to BM25-only for this query.")
+            raise
 
-    def retrieve_chunks(self, query: str, top_k: int = 3) -> list[SourceChunk]:
-        """Retrieve top-k relevant chunks from Pinecone with dynamic context expansion."""
-        query_vector = self.get_embedding(query, is_query=True)
-        
+    def _dense_search(self, query: str, top_k: int, as_of: int | None = None) -> list[dict]:
+        """Dense vector search → normalized hit dicts for the hybrid retriever.
+        Backend is config-selected: 'zvec' (local in-memory, no quota — default)
+        or 'pinecone'. Empty list on any failure → caller falls back to BM25.
+
+        as_of (epoch int): query the HISTORICAL index (Pinecone only)."""
+        # zvec: local embeddings + in-process vector DB; no quota, no network.
+        if getattr(settings, "VECTOR_BACKEND", "zvec") == "zvec" and as_of is None:
+            try:
+                from app import zvec_store, retrieval_scope
+                sc = retrieval_scope.current()
+                return zvec_store.query(query, top_k=top_k,
+                                        tenant=sc.get("tenant"), filters=sc.get("filters"))
+            except Exception as e:
+                print(f"[rag] zvec search error: {e}; falling back to BM25-only.")
+                return []
+
+        if self.pinecone_index is None:
+            return []
         try:
-            # Stage 1: Retrieve precise child/faq chunks
-            search_result = self.pinecone_index.query(
-                vector=query_vector,
-                top_k=top_k,
-                include_metadata=True
-            )
-            
-            sources = []
-            for match in search_result.matches:
-                meta = match.metadata
-                score = match.score
-                text = meta.get("text", "No text found")
-                
-                # Stage 2: Dynamic Context Expansion for hierarchical chunks
-                # If a child chunk has moderate confidence (< 0.75), fetch its parent chunk
-                if meta.get("chunk_type") == "child" and "parent_id" in meta and score < 0.75:
-                    parent_id = meta["parent_id"]
-                    try:
-                        parent_res = self.pinecone_index.fetch(ids=[parent_id])
-                        if parent_id in parent_res.vectors:
-                            # Replace the child text with the full parent context
-                            parent_meta = parent_res.vectors[parent_id].metadata
-                            text = parent_meta.get("text", text)
-                            print(f"Expanded context for child {match.id} -> parent {parent_id}")
-                    except Exception as e:
-                        print(f"Error fetching parent context: {e}")
-
-                title = meta.get("section", meta.get("screen_title", meta.get("question_id", "Extracted Chunk")))
-                sources.append(SourceChunk(
-                    title=title,
-                    text=text,
-                    source_url=meta.get("image_path", meta.get("source", "")),
-                    relevance_score=score
-                ))
-            return sources
+            query_vector = self.get_embedding(query, is_query=True)
+            kwargs = {"vector": query_vector, "top_k": top_k, "include_metadata": True}
+            if as_of is not None:
+                # Historical index: version active at `as_of` (valid_from ≤ t < valid_to).
+                kwargs["filter"] = {"valid_from": {"$lte": as_of}, "valid_to": {"$gt": as_of}}
+            elif settings.VERSIONED_INDEX:
+                # Active index: only current versions (Phase 7).
+                kwargs["filter"] = {"is_active": True}
+            result = self.pinecone_index.query(**kwargs)
+            hits = []
+            for match in result.matches:
+                meta = match.metadata or {}
+                # Fuse on the plain chunk_id (vector ids may be version-suffixed).
+                hits.append({
+                    "id": meta.get("chunk_id", match.id),
+                    "score": match.score,
+                    "text": meta.get("text", ""),
+                    "metadata": meta,
+                })
+            return hits
         except Exception as e:
-            print(f"Retrieval error: {e}")
+            print(f"Dense search error: {e}")
             return []
 
-    def process_query(self, query: str, language: str) -> ChatResponse:
+    def retrieve_chunks(self, query: str, top_k: int = 3, as_of: int | None = None) -> list[SourceChunk]:
+        """Hybrid retrieve: dense + BM25 fused, reranked, parent-expanded.
+        With `as_of` (epoch int): historical, dense-only (see HybridRetriever)."""
+        if self._retriever is None:
+            self._retriever = HybridRetriever(dense_search=self._dense_search)
+        return self._retriever.retrieve(query, top_k=top_k, as_of=as_of)
+
+    def process_query(self, query: str, language: str, as_of: int | None = None) -> ChatResponse:
         """Main RAG pipeline: Retrieve -> Prompt -> Generate."""
-        # 1. Retrieve
-        sources = self.retrieve_chunks(query)
+        # 1. Retrieve (historical if as_of given)
+        sources = self.retrieve_chunks(query, as_of=as_of)
         
         # 2. Format Context
         context_text = "\n\n".join([f"Source: {s.title}\n{s.text}" for s in sources])

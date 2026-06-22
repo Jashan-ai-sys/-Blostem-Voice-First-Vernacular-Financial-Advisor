@@ -3,22 +3,18 @@
 import { useApp } from "@/lib/store";
 import {
   TrendingUp,
-  LayoutDashboard,
   MessageCircle,
-  Landmark,
-  Home,
   Shield,
 } from "lucide-react";
 
 export default function Navbar() {
-  const { currentPage, setPage, summary, recommendation } = useApp();
+  const { currentPage, setPage } = useApp();
 
   // Don't show navbar on landing
   if (currentPage === "landing") return null;
 
   const navItems = [
-    { page: "chat" as const, icon: MessageCircle, label: "Ask AI" },
-    { page: "booking" as const, icon: Landmark, label: "Book FD", highlight: !!recommendation },
+    { page: "chat" as const, icon: MessageCircle, label: "Ask AI", highlight: false },
   ];
 
   return (

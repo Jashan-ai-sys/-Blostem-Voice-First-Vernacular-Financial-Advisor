@@ -35,8 +35,16 @@ dist/
 .vscode/
 .idea/
 
-# Data and Media
-data/journey_screens/*.mp4
-data/raw/*.pdf
+# Data folder — excluded ENTIRELY from version control (large PDFs/images, the
+# local vector index, raw corpus, and figma exports that contain credentials).
+# Files stay on disk; rebuild the index with scripts/build_zvec_index.py and
+# re-ingest the source docs out-of-band.
+data/
 *.sqlite3
 *.db
+
+# Server logs
+*.out.log
+*.err.log
+dev-server.log
+dev-server.err.log

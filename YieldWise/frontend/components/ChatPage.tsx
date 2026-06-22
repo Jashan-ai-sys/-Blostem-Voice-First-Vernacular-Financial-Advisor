@@ -1,6 +1,7 @@
 "use client";
 
 import { useApp } from "@/lib/store";
+import { apiFetch, voiceAgentUrl, BACKEND } from "@/lib/session";
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Send,
@@ -18,9 +19,6 @@ interface ChatPageProps {
   transcripts?: any[];
   isSidebar?: boolean;
 }
-
-const VOICE_AGENT = 'http://localhost:7860/client/';
-const BACKEND = 'http://localhost:8000';
 
 // Financial terms the highlighter will detect (case-insensitive match)
 const FINANCIAL_TERMS = [
@@ -102,7 +100,7 @@ export default function ChatPage({ ragContext, transcripts = [], isSidebar = fal
     });
 
     try {
-      const resp = await fetch(`${BACKEND}/tools/explain_term`, {
+      const resp = await apiFetch(`/tools/explain_term`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ term, language: 'en' }),
@@ -165,9 +163,9 @@ export default function ChatPage({ ragContext, transcripts = [], isSidebar = fal
         <div className={`p-4 flex shrink-0 ${isSidebar ? 'border-b border-border/50' : 'border-b border-border bg-surface/20'}`}>
           {/* Voice Embed — compact, just the Connect button */}
           <div className={`rounded-xl overflow-hidden border border-border/50 bg-background/50 shadow-inner ${isSidebar ? 'h-[50px] w-full' : 'h-[50px] w-[280px]'}`}>
-            <iframe 
-              src={VOICE_AGENT} 
-              allow="microphone; camera; autoplay" 
+            <iframe
+              src={voiceAgentUrl()}
+              allow="microphone; camera; autoplay"
               title="Voice Agent" 
               className="w-full h-full border-0"
             />

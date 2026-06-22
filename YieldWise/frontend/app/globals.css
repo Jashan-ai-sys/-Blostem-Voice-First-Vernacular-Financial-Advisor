@@ -1,27 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0f0d;
-  --foreground: #e8ede9;
-  --surface: #111916;
-  --surface-2: #172120;
-  --surface-3: #1e2d29;
-  --border: #2a3d36;
-  --border-light: #345249;
-  --muted: #7a9b8e;
-  --primary: #2dd4a8;
-  --primary-dim: #1a9e7a;
-  --primary-glow: rgba(45, 212, 168, 0.15);
-  --accent: #f59e0b;
-  --accent-dim: #d97706;
-  --danger: #ef4444;
-  --success: #22c55e;
-  --chart-1: #2dd4a8;
-  --chart-2: #f59e0b;
-  --chart-3: #8b5cf6;
-  --chart-4: #ec4899;
+  /* Figma "JFS Web SDK" palette — light theme (extracted from the Color Guide). */
+  --background: #FFFFFF;
+  --foreground: #191B1E;        /* Header(Title) */
+  --surface: #FFFFFF;
+  --surface-2: #F4F5F6;         /* light panels / inputs / pills */
+  --surface-3: #EBEBEC;
+  --border: #EBEBEC;            /* Border */
+  --border-light: #D7D9DB;
+  --muted: #707275;             /* Text Highlight / secondary text */
+  --primary: #C57708;           /* brand "Main" (amber/gold) */
+  --primary-dim: #A85F00;
+  --primary-glow: rgba(197, 119, 8, 0.15);
+  --accent: #026B9A;            /* blue accent (icons/links) */
+  --accent-dim: #02597F;
+  --danger: #D7263D;            /* Error */
+  --success: #25AB21;           /* GreenIcon */
+  --chart-1: #C57708;
+  --chart-2: #026B9A;
+  --chart-3: #25AB21;
+  --chart-4: #8b5cf6;
   --chart-5: #06b6d4;
-  --chart-6: #84cc16;
+  --chart-6: #D7263D;
 }
 
 @theme inline {
@@ -80,18 +81,19 @@ body {
   font-size: 12px !important;
 }
 
-/* Glass card */
+/* Card — light, subtle elevation on white (Figma UI) */
 .glass-card {
-  background: rgba(17, 25, 22, 0.7);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
   border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04), 0 1px 2px rgba(16, 24, 40, 0.03);
 }
 
 /* Glow effect */
 .glow-primary {
-  box-shadow: 0 0 40px rgba(45, 212, 168, 0.1), 0 0 80px rgba(45, 212, 168, 0.05);
+  box-shadow: 0 0 40px rgba(197, 119, 8, 0.10), 0 0 80px rgba(197, 119, 8, 0.05);
 }
 
 /* Pulse dot animation */
@@ -111,7 +113,7 @@ body {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, transparent 25%, rgba(45, 212, 168, 0.06) 50%, transparent 75%);
+  background: linear-gradient(90deg, transparent 25%, rgba(197, 119, 8, 0.06) 50%, transparent 75%);
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
@@ -142,4 +144,30 @@ body {
 
 .animate-fade-up {
   animation: fade-up 0.5s ease-out;
+}
+
+/* Agent UI actions — the bot pointing at the screen (highlight + tooltip) */
+@keyframes agent-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
+  50% { box-shadow: 0 0 0 6px var(--primary-glow); }
+}
+.agent-highlight {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 12px;
+  animation: agent-pulse 1s ease-in-out 3;
+  transition: outline 0.2s ease;
+}
+.agent-tooltip {
+  position: absolute;
+  z-index: 60;
+  max-width: 240px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 12px;
+  line-height: 1.35;
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.18);
+  pointer-events: none;
 }
